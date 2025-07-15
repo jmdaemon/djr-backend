@@ -1,0 +1,11 @@
+version: '3'
+
+services:
+ database:
+   image: mysql
+   container_name: djr-backend-db
+   environment:
+     MYSQL_ROOT_PASSWORD: password
+     MYSQL_DATABASE: djr
+   ports:
+     - 5432:3306
