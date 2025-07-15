@@ -1,29 +1,17 @@
-// use djr_backend::*;
-// use self::models::*;
-// use diesel::prelude::*;
+//! Test Customer table integration
 
 use diesel::prelude::*;
 
 use djr_backend::models::todo::Customer;
-use djr_backend::models::schema::Customer as CustomerSchema;
-
-// use djr_backend::repository::schema::customer::dsl::*;
-
-//use djr_backend::models::schema as CustomerSchema;
-
-// fn main() {
-//     let connection = djr_backend::establish_connection();
-
-//     let results = CustomerSchema::Customer
+use djr_backend::models::schema::Customer as schema_customer;
 
 fn main() {
     let mut connection = djr_backend::establish_connection();
 
-    // let results = Customer
-    let results = CustomerSchema::dsl::Customer
+    let results = schema_customer::dsl::Customer
         .limit(5)
         .load::<Customer>(&mut connection)
-        .expect("Error loading posts");
+        .expect("Error loading customers");
 
     println!("-----------------------------------------");
     println!("Found {} customers", results.len());
