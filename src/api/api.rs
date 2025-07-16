@@ -1,88 +1,128 @@
 //! Define the REST API for CRUD operations on our MySQL db
 
-use actix_web::{delete, get, put, post, web};
+use std::fmt::Error;
+
+use actix_web::{delete, get, post, put, web};
 use actix_web::{web::{
     Data,
     Json,
 }, HttpResponse};
-use crate::models::todo::Customer;
-use crate::{models::todo::Todo};
+use serde::Serialize;
+use crate::backend::MySQLBackend;
+use crate::models::customer::mock::Customer;
 
 // API Routes
 
-// Backend API for use in our database providers/implementors
+/*
+///! Backend API for use in our database providers/implementors
+///! Defines the CRUD operations for our API
 pub trait API {
     fn get_customers(&self) -> Vec<Customer>;
-}
+    // fn get_customer(&self, id: i32) -> Option<Customer>;
 
-// A database is anything that implements our backend
-pub type Database = Box<dyn API>;
-
-// Customer
-#[get("/customers")]
-pub async fn get_customers(db: web::Data<Database>) -> HttpResponse {
-    let todos = db.get_customers();
-    HttpResponse::Ok().json(todos)
-}
-
-/*
-#[post("/todos")]
-pub async fn create_todo(db: Data<Database>, new_todo: Json<Todo>) -> HttpResponse {
-    let todo = db.create_todo(new_todo.into_inner());
-    match todo {
-        Ok(todo) => HttpResponse::Ok().json(todo),
-        Err(err) => HttpResponse::InternalServerError().body(err.to_string()),
-    }
-}
-
-#[get("/todos")]
-pub async fn get_todos(db: web::Data<Database>) -> HttpResponse {
-    let todos = db.get_todos();
-    HttpResponse::Ok().json(todos)
-}
-
-#[get("/todos/{id}")]
-pub async fn get_todo_by_id(db: web::Data<Database>, id: web::Path<String>) -> HttpResponse {
-    let todo = db.get_todo_by_id(&id);
-    match todo {
-        Some(todo) => HttpResponse::Ok().json(todo),
-        None => HttpResponse::NotFound().body("Todo not found"),
-    }
-}
-
-#[put("/todos/{id}")]
-pub async fn update_todo_by_id(db: web::Data<Database>, id: web::Path<String>, updated_todo: web::Json<Todo>) -> HttpResponse {
-    let todo = db.update_todo_by_id(&id, updated_todo.into_inner());
-    match todo {
-        Some(todo) => HttpResponse::Ok().json(todo),
-        None => HttpResponse::NotFound().body("Todo not found"),
-    }
-}
-
-#[delete("/todos/{id}")]
-pub async fn delete_todo_by_id(db: web::Data<Database>, id: web::Path<String>) -> HttpResponse {
-    let todo = db.delete_todo_by_id(&id);
-    match todo {
-        Some(todo) => HttpResponse::Ok().json(todo),
-        None => HttpResponse::NotFound().body("Todo not found"),
-    }
-}
-
-// Add all the routes to our REST api service
-pub fn config(cfg: &mut web::ServiceConfig) {
-    cfg.service(web::scope("/api")
-            .service(create_todo)
-            .service(get_todos)
-            .service(get_todo_by_id)
-            .service(update_todo_by_id)
-            .service(delete_todo_by_id)
-    );
+    fn create_customer(&self, customer: Customer) -> Result<Customer, Error>;
 }
 */
 
+// REST: API:
+// Customer:
+//  GET customer/{id}
+//  GET customers
+//  POST (JSON BODY) customers
+// Employee:
+//  GET employee/{id}
+//  GET employees
+//  POST (JSON BODY) employees
+// Work Orders:
+//  GET work-order/{id}
+
+
+// A database is anything that implements our backend
+// Must be Send + Sync because it will be shared between threads on the backend server
+// pub type Database = Box<dyn API + Send + Sync>;
+
+// Endpoint: Customer
+// #[post("/customers")]
+// pub async fn create_customer(db: Data<Database>, new_customer: Json<Customer>) -> HttpResponse {
+#[post("/customers")]
+pub async fn create_customer(db: Data<MySQLBackend>, new_customer: Json<Customer>) -> HttpResponse {
+
+
+    // let customer = db.create_customer(new_customer.into_inner());
+    // match customer {
+    //     Ok(customer) => HttpResponse::Ok().json(customer),
+    //     Err(err) => HttpResponse::InternalServerError().body(err.to_string()),
+    // }
+    healthcheck()
+}
+
+#[get("/customers")]
+// pub async fn get_customers(db: web::Data<Database>) -> HttpResponse {
+pub async fn get_customers(db: web::Data<MySQLBackend>) -> HttpResponse {
+    // let todos = db.get_customers();
+    // HttpResponse::Ok().json(todos)
+    healthcheck()
+}
+
+#[get("/customers/{id}")]
+pub async fn get_customer_by_id(db: web::Data<MySQLBackend>, id: web::Path<String>) -> HttpResponse {
+    // TODO: Implement
+    healthcheck()
+
+    // let customer = db.get_customer_by_id(&id);
+    // match customer {
+    //     Some(todo) => HttpResponse::Ok().json(todo),
+    //     None => HttpResponse::NotFound().body("Customer not found"),
+    // }
+}
+
+#[put("/customers/{id}")]
+// pub async fn update_customer_by_id(db: web::Data<Database>, id: web::Path<String>, updated_customer: web::Json<Customer>) -> HttpResponse {
+pub async fn update_customer_by_id(db: web::Data<MySQLBackend>, id: web::Path<String>, updated_customer: web::Json<Customer>) -> HttpResponse {
+    // TODO: Implement
+    healthcheck()
+
+    // let customer = db.update_customer_by_id(&id, updated_customer.into_inner());
+    // match customer {
+    //     Some(todo) => HttpResponse::Ok().json(customer),
+    //     None => HttpResponse::NotFound().body("Todo not found"),
+    // }
+}
+
+#[delete("/customers/{id}")]
+// pub async fn delete_customer_by_id(db: web::Data<Database>, id: web::Path<String>) -> HttpResponse {
+pub async fn delete_customer_by_id(db: web::Data<MySQLBackend>, id: web::Path<String>) -> HttpResponse {
+    // TODO: Implement
+    healthcheck()
+
+    // let customer = db.delete_customer_by_id(&id);
+    // match customer {
+    //     Some(customer) => HttpResponse::Ok().json(customer),
+    //     None => HttpResponse::NotFound().body("Todo not found"),
+    // }
+}
+
+// Helper Functions
+#[derive(Serialize)]
+pub struct Response {
+    pub message: String,
+}
+
+fn healthcheck() -> HttpResponse {
+    let response = Response {
+        message: "Everything is working fine".to_string(),
+    };
+    HttpResponse::Ok().json(response)
+}
+
 // Add all the routes to our REST api service
 pub fn config(cfg: &mut web::ServiceConfig) {
     cfg.service(web::scope("/api")
+            .service(create_customer)
             .service(get_customers)
+            .service(get_customer_by_id)
+            .service(update_customer_by_id)
+            .service(delete_customer_by_id)
+
     );
 }

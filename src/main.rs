@@ -1,11 +1,24 @@
 use actix_web::{get, web, App, HttpResponse, HttpServer, Responder, Result};
 use serde::{Serialize};
 
-use djr_backend::{api, models, backend};
+// use djr_backend::{api::{self, Database}, backend, models};
+use djr_backend::{api, backend, models};
+use simple_logger::SimpleLogger;
 
 // 1. Create database facade
 // 2. Create customer API using database facade
 // 3. Implement customer database backend (stub + diesel backend)
+
+// TODO:
+// - Mixed Mock API requires an entirely different set of entities
+// across mock + diesel backends. May be smarter to drop one of the backends
+// and stub the data using a separate database connection.
+// - API works but doesn't provide mocked data yet for use in front-end design.
+// This should be solved when we finish the complete migration to the diesel backend,
+// and create some basic test data for use in our rest API
+//
+// Overall, we should rethink our mocking strategy or follow through with the rest
+// of the diesel backend integration
 
 #[derive(Serialize)]
 pub struct Response {
@@ -30,8 +43,19 @@ async fn not_found() -> Result<HttpResponse> {
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    let todo_db = backend::MockBackend::new();
-    let app_data = web::Data::new(todo_db);
+
+    // Enable logging
+    SimpleLogger::new().init().unwrap();
+
+    // Set RUST_LOG from within main
+    unsafe {
+        std::env::set_var("RUST_LOG", "debug");
+    }
+
+    // let djr_db: Database = Box::new(backend::MockBackend::new());
+    // let djr_db: Database = backend::MySQLBackend::new();
+    let djr_db = backend::MySQLBackend::new();
+    let app_data = web::Data::new(djr_db);
 
     HttpServer::new(move ||
         App::new()
