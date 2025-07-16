@@ -5,13 +5,22 @@ use actix_web::{web::{
     Data,
     Json,
 }, HttpResponse};
-use crate::{models::todo::Todo, repository::database::Database};
+use crate::models::todo::Customer;
+use crate::{models::todo::Todo};
 
 // API Routes
 
+// Backend API for use in our database providers/implementors
+pub trait API {
+    fn get_customers(&self) -> Vec<Customer>;
+}
+
+// A database is anything that implements our backend
+pub type Database = Box<dyn API>;
+
 // Customer
 #[get("/customers")]
-pub async fn get_customers(db: web::Data<Box<dyn Database>>) -> HttpResponse {
+pub async fn get_customers(db: web::Data<Database>) -> HttpResponse {
     let todos = db.get_customers();
     HttpResponse::Ok().json(todos)
 }

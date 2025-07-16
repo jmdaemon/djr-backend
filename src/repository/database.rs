@@ -7,12 +7,9 @@ use diesel::prelude::*;
 use diesel::r2d2::{self, ConnectionManager};
 use dotenv::dotenv;
 
+use crate::api::API;
 use crate::models::todo::{Customer, Todo};
 use crate::models::schema::todos::dsl::*;
-
-pub trait Database {
-    fn get_customers(&self) -> Vec<Customer>;
-}
 
 // Mock Backend
 pub struct MockBackend {
@@ -26,7 +23,7 @@ impl MockBackend {
     }
 }
 
-impl Database for MockBackend {
+impl API for MockBackend {
     fn get_customers(&self) -> Vec<Customer> {
         self.customers.get_cloned().unwrap()
     }
