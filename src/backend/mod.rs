@@ -1,4 +1,3 @@
-mod backend;
 mod mock_backend;
 mod mysql_backend;
 

@@ -4,6 +4,8 @@ use diesel::prelude::*;
 use diesel::r2d2::{self, ConnectionManager};
 use dotenv::dotenv;
 
+use crate::models::schema::customers::dsl::*;
+
 use crate::api::API;
 
 pub type DBPool = r2d2::Pool<ConnectionManager<MysqlConnection>>;

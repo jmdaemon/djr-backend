@@ -8,7 +8,7 @@ use actix_web::{web::{
     Json,
 }, HttpResponse};
 use serde::Serialize;
-use crate::models::todo::Customer;
+use crate::models::customer::mock::Customer;
 
 // API Routes
 

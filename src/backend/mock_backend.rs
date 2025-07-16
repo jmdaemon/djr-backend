@@ -2,7 +2,7 @@ use std::sync::atomic::{AtomicI32, Ordering};
 use std::sync::{Arc, Mutex};
 
 use crate::api::API;
-use crate::models::todo::Customer;
+use crate::models::customer::mock::Customer;
 
 pub type Index = AtomicI32;
 pub struct MockBackend {

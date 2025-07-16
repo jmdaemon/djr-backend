@@ -2,7 +2,7 @@
 
 use diesel::prelude::*;
 
-use djr_backend::models::todo::Customer;
+use djr_backend::models::customer::mysql::Customer;
 use djr_backend::models::schema::customers::dsl::*;
 
 fn main() {

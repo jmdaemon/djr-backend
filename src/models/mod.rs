@@ -1,2 +1,2 @@
-pub mod todo;
+pub mod customer;
 pub mod schema;
