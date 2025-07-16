@@ -8,6 +8,17 @@ use simple_logger::SimpleLogger;
 // 2. Create customer API using database facade
 // 3. Implement customer database backend (stub + diesel backend)
 
+// TODO:
+// - Mixed Mock API requires an entirely different set of entities
+// across mock + diesel backends. May be smarter to drop one of the backends
+// and stub the data using a separate database connection.
+// - API works but doesn't provide mocked data yet for use in front-end design.
+// This should be solved when we finish the complete migration to the diesel backend,
+// and create some basic test data for use in our rest API
+//
+// Overall, we should rethink our mocking strategy or follow through with the rest
+// of the diesel backend integration
+
 #[derive(Serialize)]
 pub struct Response {
     pub message: String,
