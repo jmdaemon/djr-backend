@@ -40,8 +40,8 @@ async fn main() -> std::io::Result<()> {
         std::env::set_var("RUST_LOG", "debug");
     }
 
-    let todo_db: Database = Box::new(backend::MockBackend::new());
-    let app_data = web::Data::new(todo_db);
+    let djr_db: Database = Box::new(backend::MockBackend::new());
+    let app_data = web::Data::new(djr_db);
 
     HttpServer::new(move ||
         App::new()

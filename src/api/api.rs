@@ -2,14 +2,13 @@
 
 use std::fmt::Error;
 
-use actix_web::{delete, get, put, post, web};
+use actix_web::{delete, get, post, put, web};
 use actix_web::{web::{
     Data,
     Json,
 }, HttpResponse};
-use crate::backend::MockBackend;
+use serde::Serialize;
 use crate::models::todo::Customer;
-use crate::{models::todo::Todo};
 
 // API Routes
 
@@ -43,65 +42,63 @@ pub async fn get_customers(db: web::Data<Database>) -> HttpResponse {
     HttpResponse::Ok().json(todos)
 }
 
-/*
-#[post("/todos")]
-pub async fn create_todo(db: Data<Database>, new_todo: Json<Todo>) -> HttpResponse {
-    let todo = db.create_todo(new_todo.into_inner());
-    match todo {
-        Ok(todo) => HttpResponse::Ok().json(todo),
-        Err(err) => HttpResponse::InternalServerError().body(err.to_string()),
-    }
+#[get("/customers/{id}")]
+pub async fn get_customer_by_id(db: web::Data<Database>, id: web::Path<String>) -> HttpResponse {
+    // TODO: Implement
+    healthcheck()
+
+    // let customer = db.get_customer_by_id(&id);
+    // match customer {
+    //     Some(todo) => HttpResponse::Ok().json(todo),
+    //     None => HttpResponse::NotFound().body("Customer not found"),
+    // }
 }
 
-#[get("/todos")]
-pub async fn get_todos(db: web::Data<Database>) -> HttpResponse {
-    let todos = db.get_todos();
-    HttpResponse::Ok().json(todos)
+#[put("/customers/{id}")]
+pub async fn update_customer_by_id(db: web::Data<Database>, id: web::Path<String>, updated_customer: web::Json<Customer>) -> HttpResponse {
+    // TODO: Implement
+    healthcheck()
+
+    // let customer = db.update_customer_by_id(&id, updated_customer.into_inner());
+    // match customer {
+    //     Some(todo) => HttpResponse::Ok().json(customer),
+    //     None => HttpResponse::NotFound().body("Todo not found"),
+    // }
 }
 
-#[get("/todos/{id}")]
-pub async fn get_todo_by_id(db: web::Data<Database>, id: web::Path<String>) -> HttpResponse {
-    let todo = db.get_todo_by_id(&id);
-    match todo {
-        Some(todo) => HttpResponse::Ok().json(todo),
-        None => HttpResponse::NotFound().body("Todo not found"),
-    }
+#[delete("/customers/{id}")]
+pub async fn delete_customer_by_id(db: web::Data<Database>, id: web::Path<String>) -> HttpResponse {
+    // TODO: Implement
+    healthcheck()
+
+    // let customer = db.delete_customer_by_id(&id);
+    // match customer {
+    //     Some(customer) => HttpResponse::Ok().json(customer),
+    //     None => HttpResponse::NotFound().body("Todo not found"),
+    // }
 }
 
-#[put("/todos/{id}")]
-pub async fn update_todo_by_id(db: web::Data<Database>, id: web::Path<String>, updated_todo: web::Json<Todo>) -> HttpResponse {
-    let todo = db.update_todo_by_id(&id, updated_todo.into_inner());
-    match todo {
-        Some(todo) => HttpResponse::Ok().json(todo),
-        None => HttpResponse::NotFound().body("Todo not found"),
-    }
+// Helper Functions
+#[derive(Serialize)]
+pub struct Response {
+    pub message: String,
 }
 
-#[delete("/todos/{id}")]
-pub async fn delete_todo_by_id(db: web::Data<Database>, id: web::Path<String>) -> HttpResponse {
-    let todo = db.delete_todo_by_id(&id);
-    match todo {
-        Some(todo) => HttpResponse::Ok().json(todo),
-        None => HttpResponse::NotFound().body("Todo not found"),
-    }
+fn healthcheck() -> HttpResponse {
+    let response = Response {
+        message: "Everything is working fine".to_string(),
+    };
+    HttpResponse::Ok().json(response)
 }
-
-// Add all the routes to our REST api service
-pub fn config(cfg: &mut web::ServiceConfig) {
-    cfg.service(web::scope("/api")
-            .service(create_todo)
-            .service(get_todos)
-            .service(get_todo_by_id)
-            .service(update_todo_by_id)
-            .service(delete_todo_by_id)
-    );
-}
-*/
 
 // Add all the routes to our REST api service
 pub fn config(cfg: &mut web::ServiceConfig) {
     cfg.service(web::scope("/api")
             .service(create_customer)
             .service(get_customers)
+            .service(get_customer_by_id)
+            .service(update_customer_by_id)
+            .service(delete_customer_by_id)
+
     );
 }
