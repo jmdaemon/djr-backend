@@ -1,3 +1,6 @@
+#![feature(lock_value_accessors)]
+
+pub mod api;
 pub mod models;
 pub mod repository;
 

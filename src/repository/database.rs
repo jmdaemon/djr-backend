@@ -1,28 +1,49 @@
 use std::env;
 use std::fmt::Error;
+use std::sync::{Arc, Mutex};
 
 use chrono::prelude::*;
 use diesel::prelude::*;
 use diesel::r2d2::{self, ConnectionManager};
 use dotenv::dotenv;
 
-use crate::models::todo::Todo;
+use crate::models::todo::{Customer, Todo};
 use crate::models::schema::todos::dsl::*;
 
-// use crate::models::schema::Todo::dsl::Todo as todos;
+pub trait Database {
+    fn get_customers(&self) -> Vec<Customer>;
+}
 
-// use crate::models::schema::Todo::dsl::Todo as todos;
+// Mock Backend
+pub struct MockBackend {
+    pub customers: Arc<Mutex<Vec<Customer>>>,
+}
 
-// use crate::models::schema::Todo as TodoSchema;
+impl MockBackend {
+    pub fn new() -> Self {
+        let customers = Arc::new(Mutex::new(vec![]));
+        Self { customers }
+    }
+}
 
-// use crate::repository::schema::todos as TodoSchema;
-// use TodoSchema::dsl::*;
+impl Database for MockBackend {
+    fn get_customers(&self) -> Vec<Customer> {
+        self.customers.get_cloned().unwrap()
+    }
+}
 
-// use diesel::prelude::*;
+// MySQL Backend
+pub struct MySQLBackend;
 
-// use crate::models::todo::Customer;
-// use crate::models::schema::Customer::dsl::*;
+// pub struct Database<T> {
+//     data: T,
+// }
 
+
+// TODO: Stub the database interface using traits to implement our REST API
+// and integrate with diesel
+
+/*
 pub type DBPool = r2d2::Pool<ConnectionManager<MysqlConnection>>;
 
 pub struct Database {
@@ -109,3 +130,4 @@ impl Database {
         Some(todo)
     }
 }
+*/

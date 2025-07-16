@@ -11,11 +11,12 @@ use crate::{models::todo::Todo, repository::database::Database};
 
 // Customer
 #[get("/customers")]
-pub async fn get_customers(db: web::Data<Database>) -> HttpResponse {
-    let todos = db.get_todos();
+pub async fn get_customers(db: web::Data<Box<dyn Database>>) -> HttpResponse {
+    let todos = db.get_customers();
     HttpResponse::Ok().json(todos)
 }
 
+/*
 #[post("/todos")]
 pub async fn create_todo(db: Data<Database>, new_todo: Json<Todo>) -> HttpResponse {
     let todo = db.create_todo(new_todo.into_inner());
@@ -66,5 +67,13 @@ pub fn config(cfg: &mut web::ServiceConfig) {
             .service(get_todo_by_id)
             .service(update_todo_by_id)
             .service(delete_todo_by_id)
+    );
+}
+*/
+
+// Add all the routes to our REST api service
+pub fn config(cfg: &mut web::ServiceConfig) {
+    cfg.service(web::scope("/api")
+            .service(get_customers)
     );
 }

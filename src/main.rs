@@ -1,9 +1,11 @@
 use actix_web::{get, web, App, HttpResponse, HttpServer, Responder, Result};
 use serde::{Serialize};
 
-mod api;
-mod models;
-mod repository;
+use djr_backend::{api, models, repository};
+
+// 1. Create database facade
+// 2. Create customer API using database facade
+// 3. Implement customer database backend (stub + diesel backend)
 
 #[derive(Serialize)]
 pub struct Response {
@@ -28,13 +30,14 @@ async fn not_found() -> Result<HttpResponse> {
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    let todo_db = repository::database::Database::new();
+    // let todo_db = repository::database::Database::new();
+    let todo_db = repository::database::MockBackend::new();
     let app_data = web::Data::new(todo_db);
 
     HttpServer::new(move ||
         App::new()
             .app_data(app_data.clone())
-            .configure(api::api::config)
+            .configure(api::config)
             .service(healthcheck)
             .default_service(web::route().to(not_found))
             .wrap(actix_web::middleware::Logger::default())
