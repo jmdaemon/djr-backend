@@ -1,5 +1,7 @@
 //! Define the REST API for CRUD operations on our MySQL db
 
+use std::fmt::Error;
+
 use actix_web::{delete, get, put, post, web};
 use actix_web::{web::{
     Data,
@@ -13,12 +15,22 @@ use crate::{models::todo::Todo};
 // Backend API for use in our database providers/implementors
 pub trait API {
     fn get_customers(&self) -> Vec<Customer>;
+    fn create_customer(&self, customer: Customer) -> Result<Customer, Error>;
 }
 
 // A database is anything that implements our backend
-pub type Database = Box<dyn API>;
+pub type Database = dyn API;
 
-// Customer
+// Endpoint: Customer
+#[post("/customers")]
+pub async fn create_customer(db: Data<Database>, new_customer: Json<Customer>) -> HttpResponse {
+    let customer = db.create_customer(new_customer.into_inner());
+    match customer {
+        Ok(customer) => HttpResponse::Ok().json(customer),
+        Err(err) => HttpResponse::InternalServerError().body(err.to_string()),
+    }
+}
+
 #[get("/customers")]
 pub async fn get_customers(db: web::Data<Database>) -> HttpResponse {
     let todos = db.get_customers();
@@ -83,6 +95,7 @@ pub fn config(cfg: &mut web::ServiceConfig) {
 // Add all the routes to our REST api service
 pub fn config(cfg: &mut web::ServiceConfig) {
     cfg.service(web::scope("/api")
+            .service(create_customer)
             .service(get_customers)
     );
 }
