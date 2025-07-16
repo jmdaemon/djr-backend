@@ -1,10 +1,10 @@
 -- Your SQL goes here
 
-CREATE TABLE Customer(
-    CustomerID int not null auto_increment,
-    FirstName varchar(50) not null, 
-    LastName varchar(50) not null, 
-    Phone varchar(12) not null, 
-    Email varchar(50) not null,
-    CONSTRAINT PK_Customer PRIMARY KEY (CustomerID)
+CREATE TABLE customers (
+    customer_id INT NOT NULL AUTO_INCREMENT,
+    first_name VARCHAR(50) NOT NULL, 
+    last_name VARCHAR(50) NOT NULL, 
+    phone VARCHAR(12) NOT NULL, 
+    email VARCHAR(50) NOT NULL,
+    CONSTRAINT pk_customer PRIMARY KEY (customer_id)
 );

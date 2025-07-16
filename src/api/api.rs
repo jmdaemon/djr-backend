@@ -9,6 +9,14 @@ use crate::{models::todo::Todo, repository::database::Database};
 
 // API Routes
 
+// Customer
+#[get("/customers")]
+pub async fn get_customers(db: web::Data<Box<dyn Database>>) -> HttpResponse {
+    let todos = db.get_customers();
+    HttpResponse::Ok().json(todos)
+}
+
+/*
 #[post("/todos")]
 pub async fn create_todo(db: Data<Database>, new_todo: Json<Todo>) -> HttpResponse {
     let todo = db.create_todo(new_todo.into_inner());
@@ -53,12 +61,19 @@ pub async fn delete_todo_by_id(db: web::Data<Database>, id: web::Path<String>) -
 
 // Add all the routes to our REST api service
 pub fn config(cfg: &mut web::ServiceConfig) {
-    cfg.service(
-        web::scope("/api")
+    cfg.service(web::scope("/api")
             .service(create_todo)
             .service(get_todos)
             .service(get_todo_by_id)
             .service(update_todo_by_id)
             .service(delete_todo_by_id)
+    );
+}
+*/
+
+// Add all the routes to our REST api service
+pub fn config(cfg: &mut web::ServiceConfig) {
+    cfg.service(web::scope("/api")
+            .service(get_customers)
     );
 }

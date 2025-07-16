@@ -3,12 +3,12 @@
 use diesel::prelude::*;
 
 use djr_backend::models::todo::Customer;
-use djr_backend::models::schema::Customer as schema_customer;
+use djr_backend::models::schema::customers::dsl::*;
 
 fn main() {
     let mut connection = djr_backend::establish_connection();
 
-    let results = schema_customer::dsl::Customer
+    let results = customers
         .limit(5)
         .load::<Customer>(&mut connection)
         .expect("Error loading customers");
