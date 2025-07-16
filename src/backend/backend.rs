@@ -1,6 +1,5 @@
 use std::env;
 use std::fmt::Error;
-use std::sync::{Arc, Mutex};
 
 use chrono::prelude::*;
 use diesel::prelude::*;
@@ -12,25 +11,9 @@ use crate::models::todo::{Customer, Todo};
 use crate::models::schema::todos::dsl::*;
 
 // Mock Backend
-pub struct MockBackend {
-    pub customers: Arc<Mutex<Vec<Customer>>>,
-}
 
-impl MockBackend {
-    pub fn new() -> Self {
-        let customers = Arc::new(Mutex::new(vec![]));
-        Self { customers }
-    }
-}
-
-impl API for MockBackend {
-    fn get_customers(&self) -> Vec<Customer> {
-        self.customers.get_cloned().unwrap()
-    }
-}
 
 // MySQL Backend
-pub struct MySQLBackend;
 
 // pub struct Database<T> {
 //     data: T,
