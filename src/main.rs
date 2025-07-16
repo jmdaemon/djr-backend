@@ -1,7 +1,7 @@
 use actix_web::{get, web, App, HttpResponse, HttpServer, Responder, Result};
 use serde::{Serialize};
 
-use djr_backend::{api, models, repository};
+use djr_backend::{api, models, backend};
 
 // 1. Create database facade
 // 2. Create customer API using database facade
@@ -30,8 +30,7 @@ async fn not_found() -> Result<HttpResponse> {
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    // let todo_db = repository::database::Database::new();
-    let todo_db = repository::database::MockBackend::new();
+    let todo_db = backend::MockBackend::new();
     let app_data = web::Data::new(todo_db);
 
     HttpServer::new(move ||
