@@ -7,6 +7,7 @@ use actix_web::{web::{
     Data,
     Json,
 }, HttpResponse};
+use crate::backend::MockBackend;
 use crate::models::todo::Customer;
 use crate::{models::todo::Todo};
 
@@ -19,7 +20,11 @@ pub trait API {
 }
 
 // A database is anything that implements our backend
-pub type Database = dyn API;
+// Must be Send + Sync because it will be shared between threads on the backend server
+pub type Database = Box<dyn API + Send + Sync>;
+
+// pub type Database = Box<dyn API>;
+// pub type Database = Box<dyn API>;
 
 // Endpoint: Customer
 #[post("/customers")]
@@ -32,6 +37,7 @@ pub async fn create_customer(db: Data<Database>, new_customer: Json<Customer>) -
 }
 
 #[get("/customers")]
+// pub async fn get_customers(db: web::Data<Database>) -> HttpResponse {
 pub async fn get_customers(db: web::Data<Database>) -> HttpResponse {
     let todos = db.get_customers();
     HttpResponse::Ok().json(todos)

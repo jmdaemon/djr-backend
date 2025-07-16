@@ -1,5 +1,30 @@
 #!/bin/bash
 
+## Customer
+
+echo "TEST: Get all Customers (empty)"
+curl -s http://localhost:8080/api/customers
+
+printf "\n"
+echo "TEST: Create new Customer"
+
+curl -s -X POST -H "Content-Type: application/json" -d \
+    '{
+        "first_name": "John",
+        "last_name": "Doe",
+        "phone": "604-111-1234",
+        "email": "john.doe@gmail.com"
+    }' http://localhost:8080/api/customers
+
+printf "\n"
+echo "TEST: Get all Customers"
+curl -s http://localhost:8080/api/customers 
+
+printf "\n"
+
+exit;
+## TODO:
+
 echo "TEST: Create a new Todo items"
 # curl -s -X POST -H "Content-Type: application/json" -d '{"title": "Buy milk", "description": "Buy 2 liters of milk"}' http://localhost:8080/api/todos | jq
 # curl -s -X POST -H "Content-Type: application/json" -d '{"title": "Buy eggs", "description": "Buy 12 eggs"}' http://localhost:8080/api/todos | jq
@@ -21,4 +46,5 @@ echo "TEST: Delete a Todo item by id"
 # curl -s -X DELETE http://localhost:8080/api/todos/$id | jq
 
 echo "TEST: Get all Todo items"
-curl -s http://localhost:8080/api/todos | jq
+# curl -s http://localhost:8080/api/todos | jq
+

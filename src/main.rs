@@ -1,7 +1,8 @@
 use actix_web::{get, web, App, HttpResponse, HttpServer, Responder, Result};
 use serde::{Serialize};
 
-use djr_backend::{api, models, backend};
+use djr_backend::{api::{self, Database}, backend, models};
+use simple_logger::SimpleLogger;
 
 // 1. Create database facade
 // 2. Create customer API using database facade
@@ -30,7 +31,16 @@ async fn not_found() -> Result<HttpResponse> {
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    let todo_db = backend::MockBackend::new();
+
+    // Enable logging
+    SimpleLogger::new().init().unwrap();
+
+    // Set RUST_LOG from within main
+    unsafe {
+        std::env::set_var("RUST_LOG", "debug");
+    }
+
+    let todo_db: Database = Box::new(backend::MockBackend::new());
     let app_data = web::Data::new(todo_db);
 
     HttpServer::new(move ||

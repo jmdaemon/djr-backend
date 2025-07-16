@@ -19,7 +19,7 @@ pub struct Todo {
 
 #[derive(Debug, Clone, Serialize, Deserialize, Queryable)]
 pub struct Customer {
-    pub customer_id: i32,
+    pub customer_id: Option<i32>,
     pub first_name: String,
     pub last_name: String,
     pub phone: String,

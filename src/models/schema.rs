@@ -4,13 +4,13 @@ diesel::table! {
     customers (customer_id) {
         customer_id -> Integer,
         #[max_length = 50]
-        first_name -> Varchar,
+        first_name -> Nullable<Varchar>,
         #[max_length = 50]
-        last_name -> Varchar,
+        last_name -> Nullable<Varchar>,
         #[max_length = 12]
-        phone -> Varchar,
+        phone -> Nullable<Varchar>,
         #[max_length = 50]
-        email -> Varchar,
+        email -> Nullable<Varchar>,
     }
 }
 

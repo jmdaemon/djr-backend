@@ -26,15 +26,17 @@ impl API for MockBackend {
         let mut i = self.index.load(Ordering::Relaxed);
         i += 1;
         self.index.store(i, Ordering::Relaxed);
+        println!("{i}");
+
         let customer_id = i;
 
-        let todo = Customer {
-            customer_id,
+        let customer = Customer {
+            customer_id: Some(customer_id),
             ..customer
         };
-        customers.push(todo.clone());
+        customers.push(customer.clone());
 
-        Ok(todo)
+        Ok(customer)
     }
 
     fn get_customers(&self) -> Vec<Customer> {
