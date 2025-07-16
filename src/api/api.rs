@@ -9,6 +9,8 @@ use crate::{models::todo::Todo, repository::database::Database};
 
 // API Routes
 
+// Customer
+
 #[post("/todos")]
 pub async fn create_todo(db: Data<Database>, new_todo: Json<Todo>) -> HttpResponse {
     let todo = db.create_todo(new_todo.into_inner());
