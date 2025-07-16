@@ -12,7 +12,8 @@ use crate::models::todo::Customer;
 
 // API Routes
 
-// Backend API for use in our database providers/implementors
+///! Backend API for use in our database providers/implementors
+///! Defines the CRUD operations for our API
 pub trait API {
     fn get_customers(&self) -> Vec<Customer>;
     fn create_customer(&self, customer: Customer) -> Result<Customer, Error>;
@@ -21,9 +22,6 @@ pub trait API {
 // A database is anything that implements our backend
 // Must be Send + Sync because it will be shared between threads on the backend server
 pub type Database = Box<dyn API + Send + Sync>;
-
-// pub type Database = Box<dyn API>;
-// pub type Database = Box<dyn API>;
 
 // Endpoint: Customer
 #[post("/customers")]
