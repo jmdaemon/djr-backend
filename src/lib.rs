@@ -2,7 +2,7 @@
 
 pub mod api;
 pub mod models;
-pub mod repository;
+pub mod backend;
 
 use diesel::prelude::*;
 
