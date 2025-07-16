@@ -1,16 +1,16 @@
 // @generated automatically by Diesel CLI.
 
 diesel::table! {
-    Customer (CustomerID) {
-        CustomerID -> Integer,
+    customers (customer_id) {
+        customer_id -> Integer,
         #[max_length = 50]
-        FirstName -> Varchar,
+        first_name -> Varchar,
         #[max_length = 50]
-        LastName -> Varchar,
+        last_name -> Varchar,
         #[max_length = 12]
-        Phone -> Varchar,
+        phone -> Varchar,
         #[max_length = 50]
-        Email -> Varchar,
+        email -> Varchar,
     }
 }
 
@@ -27,6 +27,6 @@ diesel::table! {
 }
 
 diesel::allow_tables_to_appear_in_same_query!(
-    Customer,
+    customers,
     todos,
 );
