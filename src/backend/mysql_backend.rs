@@ -4,6 +4,7 @@ use diesel::prelude::*;
 use diesel::r2d2::{self, ConnectionManager};
 use dotenv::dotenv;
 
+use crate::models::customer::mysql::Customer;
 use crate::models::schema::customers::dsl::*;
 
 // use crate::api::API;
@@ -28,5 +29,10 @@ impl MySQLBackend {
             .expect("Failed to create pool.");
 
         Self { pool }
+    }
+
+    pub fn get_customers(&self) -> Vec<Customer> {
+        customers.load::<Customer>(&mut self.pool.get().unwrap())
+            .expect("Error loading all customers")
     }
 }
