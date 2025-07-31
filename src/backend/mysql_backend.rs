@@ -1,4 +1,5 @@
 use std::env;
+use std::fmt::Error;
 
 use diesel::prelude::*;
 use diesel::r2d2::{self, ConnectionManager};
@@ -35,4 +36,29 @@ impl MySQLBackend {
         customers.load::<Customer>(&mut self.pool.get().unwrap())
             .expect("Error loading all customers")
     }
+
+    pub fn get_customer_by_id(&self, id: i32) -> Option<Customer> {
+        let customer = customers
+            .find(id)
+            .get_result::<Customer>(&mut self.pool.get().unwrap())
+            .expect("Error loading customer by id");
+        Some(customer)
+    }
+
+
+    pub fn create_customer(&self, customer: Customer) -> Result<Customer, Error> {
+        
+        let id = self.get_customers().len() as i32;
+        let customer = Customer {
+            customer_id: id,
+            ..customer
+        };
+
+        diesel::insert_into(customers)
+            .values(&customer)
+            .execute(&mut self.pool.get().unwrap())
+            .expect("Error creating new customer");
+        Ok(customer)
+    }
+
 }

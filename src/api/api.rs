@@ -9,7 +9,8 @@ use actix_web::{web::{
 }, HttpResponse};
 use serde::Serialize;
 use crate::backend::MySQLBackend;
-use crate::models::customer::mock::Customer;
+// use crate::models::customer::mock::Customer;
+use crate::models::customer::mysql::Customer;
 
 // API Routes
 
@@ -41,39 +42,33 @@ pub trait API {
 // Must be Send + Sync because it will be shared between threads on the backend server
 // pub type Database = Box<dyn API + Send + Sync>;
 
-// Endpoint: Customer
-// #[post("/customers")]
-// pub async fn create_customer(db: Data<Database>, new_customer: Json<Customer>) -> HttpResponse {
-#[post("/customers")]
-pub async fn create_customer(db: Data<MySQLBackend>, new_customer: Json<Customer>) -> HttpResponse {
-
-
-    // let customer = db.create_customer(new_customer.into_inner());
-    // match customer {
-    //     Ok(customer) => HttpResponse::Ok().json(customer),
-    //     Err(err) => HttpResponse::InternalServerError().body(err.to_string()),
-    // }
-    healthcheck()
-}
-
 /// Retrieve all customers
 #[get("/customers")]
 pub async fn get_customers(db: web::Data<MySQLBackend>) -> HttpResponse {
     HttpResponse::Ok().json(db.get_customers())
 }
 
+/// Get customer by id
 #[get("/customers/{id}")]
-pub async fn get_customer_by_id(db: web::Data<MySQLBackend>, id: web::Path<String>) -> HttpResponse {
-    // TODO: Implement
-    healthcheck()
-
-    // let customer = db.get_customer_by_id(&id);
-    // match customer {
-    //     Some(todo) => HttpResponse::Ok().json(todo),
-    //     None => HttpResponse::NotFound().body("Customer not found"),
-    // }
+pub async fn get_customer_by_id(db: web::Data<MySQLBackend>, id: web::Path<i32>) -> HttpResponse {
+    let customer = db.get_customer_by_id(*id);
+    match customer {
+        Some(customer) => HttpResponse::Ok().json(customer),
+        None => HttpResponse::NotFound().body("Customer not found"),
+    }
 }
 
+/// Create a new customer
+#[post("/customers")]
+pub async fn create_customer(db: Data<MySQLBackend>, new_customer: Json<Customer>) -> HttpResponse {
+    let customer = db.create_customer(new_customer.into_inner());
+    match customer {
+        Ok(customer) => HttpResponse::Ok().json(customer),
+        Err(err) => HttpResponse::InternalServerError().body(err.to_string()),
+    }
+}
+
+/// Update customer by id
 #[put("/customers/{id}")]
 // pub async fn update_customer_by_id(db: web::Data<Database>, id: web::Path<String>, updated_customer: web::Json<Customer>) -> HttpResponse {
 pub async fn update_customer_by_id(db: web::Data<MySQLBackend>, id: web::Path<String>, updated_customer: web::Json<Customer>) -> HttpResponse {
@@ -87,6 +82,7 @@ pub async fn update_customer_by_id(db: web::Data<MySQLBackend>, id: web::Path<St
     // }
 }
 
+/// Delete customer by id
 #[delete("/customers/{id}")]
 // pub async fn delete_customer_by_id(db: web::Data<Database>, id: web::Path<String>) -> HttpResponse {
 pub async fn delete_customer_by_id(db: web::Data<MySQLBackend>, id: web::Path<String>) -> HttpResponse {
