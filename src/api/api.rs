@@ -9,7 +9,8 @@ use actix_web::{web::{
 }, HttpResponse};
 use serde::Serialize;
 use crate::backend::MySQLBackend;
-use crate::models::customer::mock::Customer;
+// use crate::models::customer::mock::Customer;
+use crate::models::customer::mysql::Customer;
 
 // API Routes
 
@@ -44,17 +45,18 @@ pub trait API {
 // Endpoint: Customer
 // #[post("/customers")]
 // pub async fn create_customer(db: Data<Database>, new_customer: Json<Customer>) -> HttpResponse {
-#[post("/customers")]
-pub async fn create_customer(db: Data<MySQLBackend>, new_customer: Json<Customer>) -> HttpResponse {
+
+// #[post("/customers")]
+// pub async fn create_customer(db: Data<MySQLBackend>, new_customer: Json<Customer>) -> HttpResponse {
 
 
-    // let customer = db.create_customer(new_customer.into_inner());
-    // match customer {
-    //     Ok(customer) => HttpResponse::Ok().json(customer),
-    //     Err(err) => HttpResponse::InternalServerError().body(err.to_string()),
-    // }
-    healthcheck()
-}
+//     // let customer = db.create_customer(new_customer.into_inner());
+//     // match customer {
+//     //     Ok(customer) => HttpResponse::Ok().json(customer),
+//     //     Err(err) => HttpResponse::InternalServerError().body(err.to_string()),
+//     // }
+//     healthcheck()
+// }
 
 /// Retrieve all customers
 #[get("/customers")]
@@ -62,16 +64,24 @@ pub async fn get_customers(db: web::Data<MySQLBackend>) -> HttpResponse {
     HttpResponse::Ok().json(db.get_customers())
 }
 
+/// Get customer by id
 #[get("/customers/{id}")]
-pub async fn get_customer_by_id(db: web::Data<MySQLBackend>, id: web::Path<String>) -> HttpResponse {
-    // TODO: Implement
-    healthcheck()
+pub async fn get_customer_by_id(db: web::Data<MySQLBackend>, id: web::Path<i32>) -> HttpResponse {
+    let customer = db.get_customer_by_id(*id);
+    match customer {
+        Some(customer) => HttpResponse::Ok().json(customer),
+        None => HttpResponse::NotFound().body("Customer not found"),
+    }
+}
 
-    // let customer = db.get_customer_by_id(&id);
-    // match customer {
-    //     Some(todo) => HttpResponse::Ok().json(todo),
-    //     None => HttpResponse::NotFound().body("Customer not found"),
-    // }
+/// Create a new customer
+#[post("/customers")]
+pub async fn create_customer(db: Data<MySQLBackend>, new_customer: Json<Customer>) -> HttpResponse {
+    let customer = db.create_customer(new_customer.into_inner());
+    match customer {
+        Ok(customer) => HttpResponse::Ok().json(customer),
+        Err(err) => HttpResponse::InternalServerError().body(err.to_string()),
+    }
 }
 
 #[put("/customers/{id}")]
