@@ -6,7 +6,7 @@ use dotenv::dotenv;
 
 use crate::models::schema::customers::dsl::*;
 
-use crate::api::API;
+// use crate::api::API;
 
 pub type DBPool = r2d2::Pool<ConnectionManager<MysqlConnection>>;
 

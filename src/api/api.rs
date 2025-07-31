@@ -8,40 +8,64 @@ use actix_web::{web::{
     Json,
 }, HttpResponse};
 use serde::Serialize;
+use crate::backend::MySQLBackend;
 use crate::models::customer::mock::Customer;
 
 // API Routes
 
+/*
 ///! Backend API for use in our database providers/implementors
 ///! Defines the CRUD operations for our API
 pub trait API {
     fn get_customers(&self) -> Vec<Customer>;
+    // fn get_customer(&self, id: i32) -> Option<Customer>;
+
     fn create_customer(&self, customer: Customer) -> Result<Customer, Error>;
 }
+*/
+
+// REST: API:
+// Customer:
+//  GET customer/{id}
+//  GET customers
+//  POST (JSON BODY) customers
+// Employee:
+//  GET employee/{id}
+//  GET employees
+//  POST (JSON BODY) employees
+// Work Orders:
+//  GET work-order/{id}
+
 
 // A database is anything that implements our backend
 // Must be Send + Sync because it will be shared between threads on the backend server
-pub type Database = Box<dyn API + Send + Sync>;
+// pub type Database = Box<dyn API + Send + Sync>;
 
 // Endpoint: Customer
+// #[post("/customers")]
+// pub async fn create_customer(db: Data<Database>, new_customer: Json<Customer>) -> HttpResponse {
 #[post("/customers")]
-pub async fn create_customer(db: Data<Database>, new_customer: Json<Customer>) -> HttpResponse {
-    let customer = db.create_customer(new_customer.into_inner());
-    match customer {
-        Ok(customer) => HttpResponse::Ok().json(customer),
-        Err(err) => HttpResponse::InternalServerError().body(err.to_string()),
-    }
+pub async fn create_customer(db: Data<MySQLBackend>, new_customer: Json<Customer>) -> HttpResponse {
+
+
+    // let customer = db.create_customer(new_customer.into_inner());
+    // match customer {
+    //     Ok(customer) => HttpResponse::Ok().json(customer),
+    //     Err(err) => HttpResponse::InternalServerError().body(err.to_string()),
+    // }
+    healthcheck()
 }
 
 #[get("/customers")]
 // pub async fn get_customers(db: web::Data<Database>) -> HttpResponse {
-pub async fn get_customers(db: web::Data<Database>) -> HttpResponse {
-    let todos = db.get_customers();
-    HttpResponse::Ok().json(todos)
+pub async fn get_customers(db: web::Data<MySQLBackend>) -> HttpResponse {
+    // let todos = db.get_customers();
+    // HttpResponse::Ok().json(todos)
+    healthcheck()
 }
 
 #[get("/customers/{id}")]
-pub async fn get_customer_by_id(db: web::Data<Database>, id: web::Path<String>) -> HttpResponse {
+pub async fn get_customer_by_id(db: web::Data<MySQLBackend>, id: web::Path<String>) -> HttpResponse {
     // TODO: Implement
     healthcheck()
 
@@ -53,7 +77,8 @@ pub async fn get_customer_by_id(db: web::Data<Database>, id: web::Path<String>) 
 }
 
 #[put("/customers/{id}")]
-pub async fn update_customer_by_id(db: web::Data<Database>, id: web::Path<String>, updated_customer: web::Json<Customer>) -> HttpResponse {
+// pub async fn update_customer_by_id(db: web::Data<Database>, id: web::Path<String>, updated_customer: web::Json<Customer>) -> HttpResponse {
+pub async fn update_customer_by_id(db: web::Data<MySQLBackend>, id: web::Path<String>, updated_customer: web::Json<Customer>) -> HttpResponse {
     // TODO: Implement
     healthcheck()
 
@@ -65,7 +90,8 @@ pub async fn update_customer_by_id(db: web::Data<Database>, id: web::Path<String
 }
 
 #[delete("/customers/{id}")]
-pub async fn delete_customer_by_id(db: web::Data<Database>, id: web::Path<String>) -> HttpResponse {
+// pub async fn delete_customer_by_id(db: web::Data<Database>, id: web::Path<String>) -> HttpResponse {
+pub async fn delete_customer_by_id(db: web::Data<MySQLBackend>, id: web::Path<String>) -> HttpResponse {
     // TODO: Implement
     healthcheck()
 

@@ -1,7 +1,8 @@
 use actix_web::{get, web, App, HttpResponse, HttpServer, Responder, Result};
 use serde::{Serialize};
 
-use djr_backend::{api::{self, Database}, backend, models};
+// use djr_backend::{api::{self, Database}, backend, models};
+use djr_backend::{api, backend, models};
 use simple_logger::SimpleLogger;
 
 // 1. Create database facade
@@ -51,7 +52,9 @@ async fn main() -> std::io::Result<()> {
         std::env::set_var("RUST_LOG", "debug");
     }
 
-    let djr_db: Database = Box::new(backend::MockBackend::new());
+    // let djr_db: Database = Box::new(backend::MockBackend::new());
+    // let djr_db: Database = backend::MySQLBackend::new();
+    let djr_db = backend::MySQLBackend::new();
     let app_data = web::Data::new(djr_db);
 
     HttpServer::new(move ||
