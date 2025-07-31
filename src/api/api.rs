@@ -56,12 +56,10 @@ pub async fn create_customer(db: Data<MySQLBackend>, new_customer: Json<Customer
     healthcheck()
 }
 
+/// Retrieve all customers
 #[get("/customers")]
-// pub async fn get_customers(db: web::Data<Database>) -> HttpResponse {
 pub async fn get_customers(db: web::Data<MySQLBackend>) -> HttpResponse {
-    // let todos = db.get_customers();
-    // HttpResponse::Ok().json(todos)
-    healthcheck()
+    HttpResponse::Ok().json(db.get_customers())
 }
 
 #[get("/customers/{id}")]
