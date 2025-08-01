@@ -22,17 +22,22 @@ curl -s http://localhost:8080/api/customers
 printf "\n"
 
 echo "TEST: Update a Customer by ID"
-id=$(curl -s http://localhost:8080/api/customers | jq '.[0].customer_id' | xargs)
-printf "ID: %s\n" "$id"
+# id=$(curl -s http://localhost:8080/api/customers | jq '.[0].customer_id' | xargs)
+# printf "ID: %s\n" "$id"
 
-curl -s -X PUT -H "Content-Type: application/json" \
-    http://localhost:8080/api/customers/$id -d \
-    '{
-        "first_name": "John",
-        "last_name": "Dill",
-        "phone": "604-111-1234",
-        "email": "john.doe@gmail.com"
-    }' | jq
+# curl -s -X PUT -H "Content-Type: application/json" \
+#     http://localhost:8080/api/customers/$id -d \
+#     '{
+#         "first_name": "John",
+#         "last_name": "Dill",
+#         "phone": "604-111-1234",
+#         "email": "john.doe@gmail.com"
+#     }' | jq
+printf "\n"
+
+echo "TEST: Delete a Customer by id"
+id=$(curl -s http://localhost:8080/api/customers | jq '.[0].customer_id' | xargs)
+curl -s -X DELETE http://localhost:8080/api/customers/$id | jq
 printf "\n"
 
 exit;

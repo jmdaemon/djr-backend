@@ -25,6 +25,7 @@ pub struct Response {
     pub message: String,
 }
 
+/// Send heartbeat response checks for testing
 #[get("/health")]
 async fn healthcheck() -> impl Responder {
     let response = Response {
