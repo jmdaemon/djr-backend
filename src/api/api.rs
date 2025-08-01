@@ -51,6 +51,7 @@ pub async fn get_customers(db: web::Data<MySQLBackend>) -> HttpResponse {
 /// Get customer by id
 #[get("/customers/{id}")]
 pub async fn get_customer_by_id(db: web::Data<MySQLBackend>, id: web::Path<i32>) -> HttpResponse {
+
     let customer = db.get_customer_by_id(*id);
     match customer {
         Some(customer) => HttpResponse::Ok().json(customer),
@@ -70,16 +71,12 @@ pub async fn create_customer(db: Data<MySQLBackend>, new_customer: Json<Customer
 
 /// Update customer by id
 #[put("/customers/{id}")]
-// pub async fn update_customer_by_id(db: web::Data<Database>, id: web::Path<String>, updated_customer: web::Json<Customer>) -> HttpResponse {
-pub async fn update_customer_by_id(db: web::Data<MySQLBackend>, id: web::Path<String>, updated_customer: web::Json<Customer>) -> HttpResponse {
-    // TODO: Implement
-    healthcheck()
-
-    // let customer = db.update_customer_by_id(&id, updated_customer.into_inner());
-    // match customer {
-    //     Some(todo) => HttpResponse::Ok().json(customer),
-    //     None => HttpResponse::NotFound().body("Todo not found"),
-    // }
+pub async fn update_customer_by_id(db: web::Data<MySQLBackend>, id: web::Path<i32>, updated_customer: web::Json<Customer>) -> HttpResponse {
+    let customer = db.update_customer_by_id(*id, updated_customer.into_inner());
+    match customer {
+        Some(customer) => HttpResponse::Ok().json(customer),
+        None => HttpResponse::NotFound().body("Customer not found"),
+    }
 }
 
 /// Delete customer by id

@@ -61,4 +61,20 @@ impl MySQLBackend {
         Ok(customer)
     }
 
+    pub fn update_customer_by_id(&self, id: i32, mut customer: Customer) -> Option<Customer> {
+        // Replace the customer in the db with the new customer data
+        let _ = diesel::update(customers.find(id))
+            .set(&customer)
+            .execute(&mut self.pool.get().unwrap());
+
+        let customer =customers 
+            .find(id)
+            .get_result::<Customer>(&mut self.pool.get().unwrap())
+            .expect("Error loading customer by id");
+            // .set(&customer);
+            // .get_result::<Customer>(&mut self.pool.get().unwrap())
+            // .expect("Error updating todo by id");
+        Some(customer)
+    }
+
 }
