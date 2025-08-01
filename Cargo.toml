@@ -8,6 +8,7 @@ name = "list-customer"
 path = "src/bin/list-customer.rs"
 
 [dependencies]
+actix-cors = "0.7.1"
 actix-web = "4.11.0"
 chrono = { version = "0.4.41", features = ["serde"] }
 diesel = { version = "2.2.12", features = ["chrono", "mysql", "r2d2"] }

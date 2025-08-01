@@ -5,7 +5,7 @@ use actix_web::{web::{
     Data,
     Json,
 }, HttpResponse};
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use crate::backend::MySQLBackend;
 
 use crate::models::mysql::Customer;
@@ -17,6 +17,8 @@ use crate::models::mysql::Employee;
 //      GET customers
 //      PUT (JSON BODY) customers/{id}
 //      POST (JSON BODY) customers
+// Customer Extra:
+//      GET customer/email/
 // Employee:
 //      GET employee/{id}
 //      GET employees
@@ -25,12 +27,27 @@ use crate::models::mysql::Employee;
 // Work Orders:
 //      GET work-order/{id}
 
+#[derive(Deserialize)]
+pub struct CustomerInfo {
+    pub first_name: Option<String>,
+    pub last_name: Option<String>,
+    pub email: Option<String>,
+    pub phone: Option<String>,
+}
+
 // Customer Endpoints:
 
 /// Retrieve all customers
 #[get("/customers")]
 pub async fn get_customers(db: web::Data<MySQLBackend>) -> HttpResponse {
     HttpResponse::Ok().json(db.get_customers())
+}
+
+/// Search for customers by their fields
+#[get("/customer")]
+// pub async fn get_customer(db: web::Data<MySQLBackend>, info: web::Query<CustomerInfo>) -> HttpResponse {
+pub async fn search_customer(db: web::Data<MySQLBackend>, info: web::Query<CustomerInfo>) -> HttpResponse {
+    HttpResponse::Ok().json(db.search_customer(info.0))
 }
 
 /// Get customer by id
@@ -144,11 +161,16 @@ pub struct Response {
 pub fn config(cfg: &mut web::ServiceConfig) {
     cfg.service(web::scope("/api")
         // Customers
+
+        // CRUD:
         .service(create_customer)
         .service(get_customers)
         .service(get_customer_by_id)
         .service(update_customer_by_id)
         .service(delete_customer_by_id)
+
+        // Extra:
+        .service(search_customer)
 
         // Employees
         .service(create_employee)

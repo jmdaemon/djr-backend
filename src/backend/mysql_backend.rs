@@ -5,7 +5,9 @@ use diesel::prelude::*;
 use diesel::r2d2::{self, ConnectionManager};
 use dotenv::dotenv;
 
+use crate::api::CustomerInfo;
 use crate::models::mysql::Customer;
+use crate::models::schema::customers as customer_schema;
 use crate::models::schema::customers::dsl::*;
 
 use crate::models::mysql::Employee;
@@ -40,6 +42,34 @@ impl MySQLBackend {
     pub fn get_customers(&self) -> Vec<Customer> {
         customers.load::<Customer>(&mut self.pool.get().unwrap())
             .expect("Error loading all customers")
+    }
+
+    pub fn search_customer(&self, info: CustomerInfo) -> Vec<Customer> {
+        // customers.load::<Customer>(&mut self.pool.get().unwrap())
+        //     .expect("Error loading all customers")
+            // .iter().find(predicate);
+        let mut query = customers.into_boxed();
+
+        if let Some(fname) = info.first_name {
+            query = query.filter(customer_schema::first_name.eq(fname));
+        }
+
+        if let Some(lname) = info.last_name {
+            query = query.filter(customer_schema::last_name.eq(lname));
+        }
+
+        if let Some(q_email) = info.email {
+            // query = query.filter(customers::email.eq(q_email));
+            query = query.filter(customer_schema::email.eq(q_email));
+        }
+
+        if let Some(q_phone) = info.phone {
+            query = query.filter(customer_schema::phone.eq(q_phone));
+        }
+
+        query.load::<Customer>(&mut self.pool.get().unwrap())
+            .expect("Error loading all customers")
+
     }
 
     pub fn get_customer_by_id(&self, id: i32) -> Option<Customer> {

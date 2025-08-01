@@ -8,13 +8,13 @@ printf "\n"
 
 echo "TEST: Create new Customer"
 
-# curl -s -X POST -H "Content-Type: application/json" -d \
-#     '{
-#         "first_name": "John",
-#         "last_name": "Doe",
-#         "phone": "604-111-1234",
-#         "email": "john.doe@gmail.com"
-#     }' http://localhost:8080/api/customers
+curl -s -X POST -H "Content-Type: application/json" -d \
+    '{
+        "first_name": "John",
+        "last_name": "Doe",
+        "phone": "604-111-1234",
+        "email": "john.doe@gmail.com"
+    }' http://localhost:8080/api/customers
 printf "\n"
 
 echo "TEST: Get all Customers"
@@ -36,8 +36,8 @@ echo "TEST: Update a Customer by ID"
 printf "\n"
 
 echo "TEST: Delete a Customer by id"
-id=$(curl -s http://localhost:8080/api/customers | jq '.[0].customer_id' | xargs)
-curl -s -X DELETE http://localhost:8080/api/customers/$id | jq
+# id=$(curl -s http://localhost:8080/api/customers | jq '.[0].customer_id' | xargs)
+# curl -s -X DELETE http://localhost:8080/api/customers/$id | jq
 printf "\n"
 
 exit;

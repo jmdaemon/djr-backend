@@ -1,4 +1,5 @@
-use actix_web::{get, web, App, HttpResponse, HttpServer, Responder, Result};
+use actix_cors::Cors;
+use actix_web::{get, http::header, web, App, HttpResponse, HttpServer, Responder, Result};
 use serde::{Serialize};
 
 // use djr_backend::{api::{self, Database}, backend, models};
@@ -59,7 +60,30 @@ async fn main() -> std::io::Result<()> {
     let app_data = web::Data::new(djr_db);
 
     HttpServer::new(move ||
-        App::new()
+        App::new() 
+            // Enable CORS
+            .wrap(
+                Cors::default()
+                // add specific origin to allowed origin list
+                .allowed_origin("http://localhost:3000")
+                // allow any port on localhost
+                .allowed_origin_fn(|origin, _req_head| {
+                    origin.as_bytes().starts_with(b"http://localhost")
+                    })
+                    // set allowed methods list
+                    .allowed_methods(vec!["GET", "POST", "PUT", "DELETE"])
+                    // set allowed request header list
+                    .allowed_headers(&[header::AUTHORIZATION, header::ACCEPT])
+                    // add header to allowed list
+                    .allowed_header(header::CONTENT_TYPE)
+                    // set list of headers that are safe to expose
+                    .expose_headers(&[header::CONTENT_DISPOSITION])
+                    // allow cURL/HTTPie from working without providing Origin headers
+                    .block_on_origin_mismatch(false)
+                    // set preflight cache TTL
+                    .max_age(3600),
+            )
+            // Setup Routes
             .app_data(app_data.clone())
             .configure(api::config)
             .service(healthcheck)
