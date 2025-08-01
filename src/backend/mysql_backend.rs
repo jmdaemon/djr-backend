@@ -5,8 +5,11 @@ use diesel::prelude::*;
 use diesel::r2d2::{self, ConnectionManager};
 use dotenv::dotenv;
 
-use crate::models::customer::mysql::Customer;
+use crate::models::mysql::Customer;
 use crate::models::schema::customers::dsl::*;
+
+use crate::models::mysql::Employee;
+use crate::models::schema::employees::dsl::*;
 
 // use crate::api::API;
 
@@ -32,6 +35,8 @@ impl MySQLBackend {
         Self { pool }
     }
 
+    // Customer Endpoints:
+
     pub fn get_customers(&self) -> Vec<Customer> {
         customers.load::<Customer>(&mut self.pool.get().unwrap())
             .expect("Error loading all customers")
@@ -45,9 +50,7 @@ impl MySQLBackend {
         Some(customer)
     }
 
-
     pub fn create_customer(&self, customer: Customer) -> Result<Customer, Error> {
-        
         let id = self.get_customers().len() as i32;
         let customer = Customer {
             customer_id: id,
@@ -80,5 +83,55 @@ impl MySQLBackend {
             .expect("Error deleting customer by id");
         Some(count)
     }
+
+    // Employee Endpoints:
+
+    pub fn get_employees(&self) -> Vec<Employee> {
+        employees.load::<Employee>(&mut self.pool.get().unwrap())
+            .expect("Error loading all employees")
+    }
+
+    pub fn get_employee_by_id(&self, id: i32) -> Option<Employee> {
+        let employee = employees
+            .find(id)
+            .get_result::<Employee>(&mut self.pool.get().unwrap())
+            .expect("Error loading employee by id");
+        Some(employee)
+    }
+
+    pub fn create_employee(&self, employee: Employee) -> Result<Employee, Error> {
+        let id = self.get_customers().len() as i32;
+        let employee  = Employee{
+            employee_id: id,
+            ..employee
+        };
+
+        diesel::insert_into(employees)
+            .values(&employee)
+            .execute(&mut self.pool.get().unwrap())
+            .expect("Error creating new employee");
+        Ok(employee)
+    }
+
+    pub fn update_employee_by_id(&self, id: i32, mut employee: Employee) -> Option<Employee> {
+        // Replace the customer in the db with the new customer data
+        let _ = diesel::update(employees.find(id))
+            .set(&employee)
+            .execute(&mut self.pool.get().unwrap());
+
+        let employee = employees
+            .find(id)
+            .get_result::<Employee>(&mut self.pool.get().unwrap())
+            .expect("Error loading employee by id");
+        Some(employee)
+    }
+    
+    pub fn delete_employee_by_id(&self, id: i32) -> Option<usize> {
+        let count = diesel::delete(employees.find(id))
+            .execute(&mut self.pool.get().unwrap())
+            .expect("Error deleting employee by id");
+        Some(count)
+    }
+
 
 }

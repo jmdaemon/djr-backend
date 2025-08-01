@@ -41,4 +41,16 @@ pub mod mysql {
         pub phone: Option<String>,
         pub email: Option<String>,
     }
+
+    #[derive(Debug, Clone, Serialize, Deserialize, Queryable, Insertable, AsChangeset)]
+    #[diesel(table_name = crate::models::schema::employees)]
+    #[diesel(check_for_backend(diesel::mysql::Mysql))]
+    pub struct Employee {
+        #[serde(default)]
+        pub employee_id: i32,
+        pub first_name: Option<String>,
+        pub last_name: Option<String>,
+        pub phone: Option<String>,
+        pub email: Option<String>,
+    }
 }
