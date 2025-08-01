@@ -71,10 +71,14 @@ impl MySQLBackend {
             .find(id)
             .get_result::<Customer>(&mut self.pool.get().unwrap())
             .expect("Error loading customer by id");
-            // .set(&customer);
-            // .get_result::<Customer>(&mut self.pool.get().unwrap())
-            // .expect("Error updating todo by id");
         Some(customer)
+    }
+    
+    pub fn delete_customer_by_id(&self, id: i32) -> Option<usize> {
+        let count = diesel::delete(customers.find(id))
+            .execute(&mut self.pool.get().unwrap())
+            .expect("Error deleting customer by id");
+        Some(count)
     }
 
 }

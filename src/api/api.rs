@@ -81,16 +81,13 @@ pub async fn update_customer_by_id(db: web::Data<MySQLBackend>, id: web::Path<i3
 
 /// Delete customer by id
 #[delete("/customers/{id}")]
-// pub async fn delete_customer_by_id(db: web::Data<Database>, id: web::Path<String>) -> HttpResponse {
-pub async fn delete_customer_by_id(db: web::Data<MySQLBackend>, id: web::Path<String>) -> HttpResponse {
-    // TODO: Implement
-    healthcheck()
+pub async fn delete_customer_by_id(db: web::Data<MySQLBackend>, id: web::Path<i32>) -> HttpResponse {
 
-    // let customer = db.delete_customer_by_id(&id);
-    // match customer {
-    //     Some(customer) => HttpResponse::Ok().json(customer),
-    //     None => HttpResponse::NotFound().body("Todo not found"),
-    // }
+    let customer = db.delete_customer_by_id(*id);
+    match customer {
+        Some(customer) => HttpResponse::Ok().json(customer),
+        None => HttpResponse::NotFound().body("Customer not found"),
+    }
 }
 
 // Helper Functions
